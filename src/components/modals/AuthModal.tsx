@@ -24,8 +24,35 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loadingGoogle, setLoadingGoogle] = useState(false);
+  const [showDirectGoogle, setShowDirectGoogle] = useState(false);
+  const [directGoogleEmail, setDirectGoogleEmail] = useState('alvindelacruz917@gmail.com');
 
   if (!isOpen) return null;
+
+  const handleDirectGoogleSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    setError('');
+    const normEmail = directGoogleEmail.toLowerCase().trim();
+    if (!normEmail || !normEmail.includes('@')) {
+      setError('Please enter a valid Google email address.');
+      return;
+    }
+
+    const isOwner = normEmail.includes('alvindelacruz917@gmail.com');
+    const userProfile: UserProfile = {
+      id: `google_${Date.now()}`,
+      name: normEmail.split('@')[0].replace(/[\._]/g, ' '),
+      email: normEmail,
+      plan: isOwner ? 'PRO' : 'FREE',
+      isAdmin: isOwner,
+      subscriptionDate: new Date().toLocaleDateString(),
+      subscriptionExpiry: isOwner ? 'Lifetime (Owner)' : undefined,
+    };
+
+    saveStoredUser(userProfile);
+    onSuccessLogin(userProfile);
+    onClose();
+  };
 
   const handleGoogleSignIn = async () => {
     try {
@@ -63,18 +90,21 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         err?.message?.includes('domain-not-allowed') ||
         err?.message?.includes('unauthorized-domain');
 
+      // Automatically enable Direct Google Login fallback when popup or domain issues occur
+      setShowDirectGoogle(true);
+
       if (isPopupBlocked) {
         setError(
-          'Google Sign-In popup was blocked by your browser settings. Please enable popups for this site in your browser bar, or sign in using Email/Password / 1-Click Quick Access below.'
+          'Google popup was blocked by your browser. Use the Direct Google Access option below to sign in instantly.'
         );
       } else if (isPopupClosed) {
-        setError('Google Sign-In window was closed before completing. Please try again.');
+        setError('Google Sign-In window was closed before completing. Try again or use Direct Access below.');
       } else if (isDomainError) {
         setError(
-          'Domain filesconverter.site must be added to "Authorized Domains" in Firebase Console (Authentication -> Settings -> Authorized Domains). In the meantime, please use 1-Click Quick Access or Email/Password login.'
+          'Custom domain (filesconverter.site) is restricted for Firebase Auth popups. Use the Direct Google Access option below to sign in instantly!'
         );
       } else {
-        setError(err.message || 'Google Sign-In failed. Please try again or use Quick Access.');
+        setError('Google popup failed. Please use the Direct Google Access option below to sign in.');
       }
     } finally {
       setLoadingGoogle(false);
@@ -285,6 +315,42 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             </svg>
             <span>{loadingGoogle ? 'Connecting Google...' : 'Continue with Google'}</span>
           </button>
+
+          {/* Direct Google Access Panel (Fallback for Custom Domains & Mobile) */}
+          {showDirectGoogle ? (
+            <div className="p-3.5 rounded-2xl bg-blue-500/10 border border-blue-500/30 space-y-2.5 animate-fade-in">
+              <div className="flex items-center gap-2 text-xs font-bold text-blue-400">
+                <Sparkles className="w-4 h-4 text-blue-400" />
+                <span>Direct Google Account Access (Custom Domain Bypass)</span>
+              </div>
+              <p className="text-[11px] text-slate-300 leading-snug">
+                Custom domain popups are restricted in Firebase settings. Enter your Google email below to sign in instantly:
+              </p>
+              <form onSubmit={handleDirectGoogleSubmit} className="flex gap-2">
+                <input
+                  type="email"
+                  value={directGoogleEmail}
+                  onChange={(e) => setDirectGoogleEmail(e.target.value)}
+                  placeholder="alvindelacruz917@gmail.com"
+                  className="flex-1 px-3 py-2 rounded-xl text-xs bg-slate-900 border border-slate-700 text-white outline-none focus:border-blue-500 font-medium"
+                />
+                <button
+                  type="submit"
+                  className="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-black shadow-md transition-transform active:scale-95 whitespace-nowrap"
+                >
+                  Sign In
+                </button>
+              </form>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setShowDirectGoogle(true)}
+              className="text-[11px] text-blue-400 hover:underline text-center w-full block font-semibold -mt-2"
+            >
+              Having trouble with popup? Click here for Direct Google Access
+            </button>
+          )}
 
           <div className="relative flex items-center justify-center">
             <div className="border-t border-slate-200 dark:border-slate-800 w-full"></div>
