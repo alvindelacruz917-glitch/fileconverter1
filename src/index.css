@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+@layer utilities {
+  /* Custom smooth scrollbars */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.25);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(148, 163, 184, 0.4);
+  }
+
+  /* Fade-in & subtle slide animation */
+  .animate-fade-in {
+    animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Refined flat-modern shadows for dark mode */
+  .glow-blue {
+    box-shadow: 0 2px 10px -2px rgba(37, 99, 235, 0.05);
+  }
+
+  .glow-amber {
+    box-shadow: 0 2px 10px -2px rgba(245, 158, 11, 0.06);
+  }
+
+  /* Flat modern dark mode surface and border overrides */
+  .dark .shadow-2xl,
+  .dark .shadow-xl,
+  .dark .shadow-lg {
+    box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.25) !important;
+  }
+}
+
+/* Base Body Styles for Flat Modern Aesthetics */
+body {
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+

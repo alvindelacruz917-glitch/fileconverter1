@@ -1,0 +1,28 @@
+/* Light Theme Stylesheet */
+QMainWindow, QDialog {
+    background-color: #F8FAFC;
+    color: #0F172A;
+}
+
+QWidget {
+    font-family: 'Segoe UI', 'Inter', sans-serif;
+    color: #0F172A;
+}
+
+QFrame#card {
+    background-color: #FFFFFF;
+    border-radius: 18px;
+    border: 1px solid #E2E8F0;
+}
+
+QPushButton {
+    background-color: #2563EB;
+    color: #FFFFFF;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-weight: 600;
+}
+
+QPushButton:hover {
+    background-color: #1D4ED8;
+}
