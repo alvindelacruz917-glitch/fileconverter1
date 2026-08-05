@@ -17,8 +17,11 @@ import {
 } from 'lucide-react';
 import * as pdfjsLib from 'pdfjs-dist';
 
-// Configure pdfjs worker to reliable CDN URL
-pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js`;
+// Configure pdfjs worker to matching version
+if (typeof window !== 'undefined') {
+  const version = pdfjsLib.version || '6.2.108';
+  pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${version}/build/pdf.worker.min.mjs`;
+}
 
 interface PdfPreviewModalProps {
   isOpen: boolean;
@@ -57,25 +60,33 @@ export const PdfPreviewModal: React.FC<PdfPreviewModalProps> = ({
   useEffect(() => {
     let isCancelled = false;
 
-    if (isOpen && pdfUrl && isPdf) {
+    if (isOpen && pdfUrl && pdfUrl.trim() !== '' && isPdf) {
       setPdfLoading(true);
       setPdfError(null);
       setCurrentPage(1);
 
-      const loadingTask = pdfjsLib.getDocument(pdfUrl);
-      loadingTask.promise
-        .then((pdfDoc) => {
-          if (isCancelled) return;
-          setNumPages(pdfDoc.numPages);
+      try {
+        const loadingTask = pdfjsLib.getDocument({ url: pdfUrl });
+        loadingTask.promise
+          .then((pdfDoc) => {
+            if (isCancelled) return;
+            setNumPages(pdfDoc.numPages);
+            setPdfLoading(false);
+            renderPdfPage(pdfDoc, 1, scale);
+          })
+          .catch((err) => {
+            if (isCancelled) return;
+            console.error('PDF.js loading error:', err);
+            setPdfError('Failed to parse PDF document into canvas. You can download or open in a new tab.');
+            setPdfLoading(false);
+          });
+      } catch (err) {
+        if (!isCancelled) {
+          console.error('PDF.js init error:', err);
+          setPdfError('Failed to initialize PDF preview.');
           setPdfLoading(false);
-          renderPdfPage(pdfDoc, 1, scale);
-        })
-        .catch((err) => {
-          if (isCancelled) return;
-          console.error('PDF.js loading error:', err);
-          setPdfError('Failed to parse PDF document into canvas. You can download or open in a new tab.');
-          setPdfLoading(false);
-        });
+        }
+      }
     }
 
     return () => {
@@ -85,11 +96,17 @@ export const PdfPreviewModal: React.FC<PdfPreviewModalProps> = ({
 
   // Re-render current page when page or scale changes
   useEffect(() => {
-    if (isOpen && pdfUrl && isPdf && numPages > 0) {
-      const loadingTask = pdfjsLib.getDocument(pdfUrl);
-      loadingTask.promise.then((pdfDoc) => {
-        renderPdfPage(pdfDoc, currentPage, scale);
-      });
+    if (isOpen && pdfUrl && pdfUrl.trim() !== '' && isPdf && numPages > 0) {
+      try {
+        const loadingTask = pdfjsLib.getDocument({ url: pdfUrl });
+        loadingTask.promise.then((pdfDoc) => {
+          renderPdfPage(pdfDoc, currentPage, scale);
+        }).catch((err) => {
+          console.error('Page render error:', err);
+        });
+      } catch (e) {
+        console.error('Page render exception:', e);
+      }
     }
   }, [currentPage, scale]);
 
@@ -190,7 +207,7 @@ export const PdfPreviewModal: React.FC<PdfPreviewModalProps> = ({
 
           <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             <a
-              href={pdfUrl}
+              href={pdfUrl || '#'}
               target="_blank"
               rel="noopener noreferrer"
               className="p-2 sm:px-3 sm:py-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white border border-white/10 transition-colors flex items-center gap-1.5 text-xs font-semibold"
@@ -201,7 +218,7 @@ export const PdfPreviewModal: React.FC<PdfPreviewModalProps> = ({
             </a>
 
             <a
-              href={pdfUrl}
+              href={pdfUrl || '#'}
               download={fileName}
               className="px-3 sm:px-4 py-2 sm:py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg shadow-emerald-500/20 transition-all transform hover:scale-[1.02]"
             >
@@ -302,7 +319,7 @@ export const PdfPreviewModal: React.FC<PdfPreviewModalProps> = ({
               <p className="text-xs text-[#B5BDD1] leading-relaxed">{pdfError}</p>
               <div className="flex items-center justify-center gap-3 pt-2">
                 <a
-                  href={pdfUrl}
+                  href={pdfUrl || '#'}
                   download={fileName}
                   className="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-blue-500/20"
                 >
@@ -313,11 +330,13 @@ export const PdfPreviewModal: React.FC<PdfPreviewModalProps> = ({
             </div>
           ) : isImage ? (
             <div className="w-full h-full flex items-center justify-center p-2 overflow-auto">
-              <img
-                src={pdfUrl}
-                alt={fileName}
-                className="max-h-full max-w-full object-contain rounded-2xl border border-white/10 shadow-2xl bg-[#141A26]"
-              />
+              {pdfUrl ? (
+                <img
+                  src={pdfUrl}
+                  alt={fileName}
+                  className="max-h-full max-w-full object-contain rounded-2xl border border-white/10 shadow-2xl bg-[#141A26]"
+                />
+              ) : null}
             </div>
           ) : isText ? (
             <div className="w-full h-full bg-[#141A26] rounded-2xl border border-white/10 p-4 font-mono text-xs sm:text-sm text-slate-200 overflow-auto whitespace-pre-wrap">
@@ -343,7 +362,7 @@ export const PdfPreviewModal: React.FC<PdfPreviewModalProps> = ({
                 Your document is converted and ready. Click download to save it locally.
               </p>
               <a
-                href={pdfUrl}
+                href={pdfUrl || '#'}
                 download={fileName}
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg shadow-emerald-500/20"
               >

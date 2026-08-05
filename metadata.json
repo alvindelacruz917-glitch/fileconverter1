@@ -1,6 +1,6 @@
 {
-  "name": "Remix Universal Converter Pro",
-  "description": "Commercial-grade universal file converter developed by Alvin supporting PDF, Image, and Document tools with offline processing, credits, and PRO subscription.",
+  "name": "FilesConverter.site - Universal File Converter Pro",
+  "description": "Commercial-grade universal file converter suite for filesconverter.site supporting PDF, Image, Document, Audio, and Video tools with offline processing, GCash/Maya credits, and admin tools.",
   "requestFramePermissions": [],
   "majorCapabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"

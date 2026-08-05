@@ -54,7 +54,7 @@ export const savePaymentSettings = async (settings: PaymentSettings) => {
     const ref = doc(db, 'settings', 'payment');
     await setDoc(ref, settings, { merge: true });
   } catch (e) {
-    console.error('Failed to save payment settings:', e);
+    console.warn('Failed to save payment settings to Firestore, saved to localStorage instead:', e);
   }
 };
 

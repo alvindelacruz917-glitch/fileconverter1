@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { DropZone } from '../DropZone';
 import { ToolCard } from '../ToolCard';
 import { ConverterTool } from '../../types/converter';
@@ -67,7 +68,7 @@ const CustomToolDropdown: React.FC<{
   });
 
   return (
-    <div ref={dropdownRef} className="relative flex-1 min-w-[280px]">
+    <div ref={dropdownRef} className="relative z-50 flex-1 min-w-[280px]">
       {/* TRIGGER BUTTON */}
       <button
         type="button"
@@ -107,14 +108,20 @@ const CustomToolDropdown: React.FC<{
       {/* DROPDOWN POPUP MENU */}
       {isOpen && (
         <div
-          className={`absolute top-full left-0 right-0 mt-2.5 rounded-2xl border shadow-2xl z-50 overflow-hidden animate-fade-in backdrop-blur-2xl ${
+          className={`absolute top-full left-0 right-0 sm:min-w-[360px] mt-2 rounded-2xl border shadow-2xl z-50 overflow-hidden animate-fade-in ${
             theme === 'dark'
-              ? 'bg-[#1E293B]/95 border-slate-700/90 text-white shadow-blue-900/30'
-              : 'bg-white/95 border-slate-200/90 text-slate-900 shadow-slate-300/60'
+              ? 'bg-[#1E293B] border-slate-700 text-white shadow-2xl shadow-black/90'
+              : 'bg-white border-slate-200 text-slate-900 shadow-2xl shadow-slate-300/80'
           }`}
         >
           {/* Header Search & Filter Pills */}
-          <div className="p-3 border-b border-inherit bg-slate-500/5 space-y-2.5">
+          <div
+            className={`p-3 border-b space-y-2.5 ${
+              theme === 'dark'
+                ? 'border-slate-700/80 bg-[#0F172A]'
+                : 'border-slate-200 bg-slate-50'
+            }`}
+          >
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-blue-500" />
               <input
@@ -124,8 +131,8 @@ const CustomToolDropdown: React.FC<{
                 placeholder="Filter tools..."
                 className={`w-full pl-8 pr-3 py-1.5 rounded-xl text-xs outline-none border transition-all ${
                   theme === 'dark'
-                    ? 'bg-[#0F172A] border-slate-700 text-white placeholder-slate-500 focus:border-blue-500'
-                    : 'bg-slate-100 border-slate-200 text-slate-900 placeholder-slate-400 focus:border-blue-600'
+                    ? 'bg-[#1E293B] border-slate-700 text-white placeholder-slate-400 focus:border-blue-500'
+                    : 'bg-white border-slate-300 text-slate-900 placeholder-slate-400 focus:border-blue-600'
                 }`}
               />
             </div>
@@ -145,7 +152,9 @@ const CustomToolDropdown: React.FC<{
                   className={`px-2.5 py-1 rounded-lg text-[11px] font-extrabold transition-all shrink-0 ${
                     selectedCat === cat.id
                       ? 'bg-blue-600 text-white shadow-sm'
-                      : 'bg-slate-500/10 text-slate-400 hover:text-slate-200 hover:bg-slate-500/20'
+                      : theme === 'dark'
+                      ? 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700'
+                      : 'bg-slate-100 text-slate-700 hover:text-slate-900 hover:bg-slate-200'
                   }`}
                 >
                   {cat.label}
@@ -189,10 +198,23 @@ const CustomToolDropdown: React.FC<{
                       <div className="min-w-0">
                         <div className="flex items-center gap-1.5">
                           <span className="text-xs font-bold truncate">{t.name}</span>
-                          <span className="px-1 py-0.2 rounded text-[9px] font-black uppercase tracking-wider bg-slate-500/15 text-slate-400">
+                          <span
+                            className={`px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider ${
+                              theme === 'dark'
+                                ? 'bg-slate-800 text-slate-300'
+                                : 'bg-slate-100 text-slate-600 border border-slate-200'
+                            }`}
+                          >
                             {t.category}
                           </span>
                         </div>
+                        <p
+                          className={`text-[10px] truncate ${
+                            theme === 'dark' ? 'text-slate-400' : 'text-slate-500'
+                          }`}
+                        >
+                          {t.description}
+                        </p>
                       </div>
                     </div>
 
@@ -201,7 +223,32 @@ const CustomToolDropdown: React.FC<{
                 );
               })
             ) : (
-              <div className="p-6 text-center text-xs text-slate-400">No converter tools match</div>
+              <div
+                className={`p-6 text-center space-y-2 rounded-xl ${
+                  theme === 'dark' ? 'bg-[#0F172A]' : 'bg-slate-50'
+                }`}
+              >
+                <div className="w-8 h-8 rounded-full bg-blue-500/10 text-blue-500 flex items-center justify-center mx-auto">
+                  <Search className="w-4 h-4" />
+                </div>
+                <p
+                  className={`text-xs font-bold ${
+                    theme === 'dark' ? 'text-slate-200' : 'text-slate-700'
+                  }`}
+                >
+                  No tools found matching "{filterQuery}"
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFilterQuery('');
+                    setSelectedCat('all');
+                  }}
+                  className="px-3 py-1.5 text-xs font-extrabold text-white bg-blue-600 hover:bg-blue-500 rounded-xl transition-colors shadow-sm"
+                >
+                  Clear Search & Show All Tools
+                </button>
+              </div>
             )}
           </div>
         </div>
@@ -272,8 +319,11 @@ export const HomePage: React.FC<HomePageProps> = ({
       ) : (
         <>
           {/* LARGE HERO SECTION WITH CONVERTER SELECTOR */}
-          <section
-            className={`relative overflow-hidden rounded-[28px] p-8 md:p-12 border transition-all ${
+          <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: 'easeOut' }}
+            className={`relative z-20 rounded-[28px] p-8 md:p-12 border transition-all ${
               theme === 'dark'
                 ? 'bg-gradient-to-br from-[#1E293B] via-[#0F172A] to-[#1E293B] border-slate-700/80 shadow-2xl'
                 : 'bg-gradient-to-br from-white via-slate-50 to-blue-50/40 border-slate-200 shadow-xl'
@@ -286,10 +336,15 @@ export const HomePage: React.FC<HomePageProps> = ({
               {/* Header Badge & Title */}
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="space-y-3">
-                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-extrabold bg-blue-600/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
-                    <Zap className="w-3.5 h-3.5 fill-current" />
-                    <span>Universal Converter Pro • Developed by Alvin</span>
-                  </div>
+                  <motion.div
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1 }}
+                    className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-extrabold bg-blue-600/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 shadow-sm"
+                  >
+                    <Zap className="w-3.5 h-3.5 fill-current animate-pulse text-blue-500" />
+                    <span>FilesConverter.site • Universal Converter Pro</span>
+                  </motion.div>
 
                   <h1 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-white leading-[1.15]">
                     Convert Files Instantly
@@ -303,18 +358,20 @@ export const HomePage: React.FC<HomePageProps> = ({
                 </div>
 
                 {/* Pro VIP Marketing Trigger Badge */}
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={onOpenPricing}
-                  className="self-start md:self-auto px-5 py-3 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-black text-xs shadow-lg shadow-amber-500/25 flex items-center gap-2.5 transition-all transform hover:scale-[1.02]"
+                  className="self-start md:self-auto px-5 py-3 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-black text-xs shadow-lg shadow-amber-500/25 flex items-center gap-2.5 transition-all"
                 >
                   <Crown className="w-4 h-4 fill-slate-950" />
                   <span>{isPro ? 'PRO UNLIMITED ACTIVE' : 'UPGRADE TO PRO UNLIMITED'}</span>
                   <Sparkles className="w-3.5 h-3.5" />
-                </button>
+                </motion.button>
               </div>
 
               {/* CONVERTER SELECTOR (Choose converter before dropping) */}
-              <div className="p-5 rounded-2xl bg-slate-500/5 border border-slate-200 dark:border-slate-800 space-y-3">
+              <div className="p-5 rounded-2xl bg-slate-500/5 border border-slate-200 dark:border-slate-800 space-y-3 relative z-30">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <label className="text-xs font-extrabold uppercase tracking-wider text-slate-600 dark:text-slate-300 flex items-center gap-2">
                     <FileCheck className="w-4 h-4 text-blue-500" />
@@ -347,8 +404,10 @@ export const HomePage: React.FC<HomePageProps> = ({
                       { id: 'word_to_pdf', label: '📄 Word to PDF' },
                       { id: 'pdf_merge', label: '📑 PDF Merge' },
                     ].map((btn) => (
-                      <button
+                      <motion.button
                         key={btn.id}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
                         onClick={() => {
                           setSelectedToolId(btn.id);
                           const toolObj = ALL_TOOLS.find((t) => t.id === btn.id);
@@ -356,14 +415,14 @@ export const HomePage: React.FC<HomePageProps> = ({
                         }}
                         className={`px-3.5 py-3 rounded-2xl text-xs font-extrabold border transition-all ${
                           selectedToolId === btn.id
-                            ? 'bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-500/20'
+                            ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-blue-600 shadow-md shadow-blue-500/25'
                             : theme === 'dark'
                             ? 'bg-[#1E293B] text-slate-300 border-slate-700 hover:bg-slate-800'
-                            : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
+                            : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100 shadow-sm'
                         }`}
                       >
                         {btn.label}
-                      </button>
+                      </motion.button>
                     ))}
                   </div>
                 </div>
@@ -383,10 +442,15 @@ export const HomePage: React.FC<HomePageProps> = ({
                 />
               </div>
             </div>
-          </section>
+          </motion.section>
 
           {/* MARKETING PRO UNLIMITED SECTION */}
-          <section className="space-y-6">
+          <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.2 }}
+            className="space-y-6"
+          >
             <div className="relative overflow-hidden rounded-[24px] p-8 md:p-10 bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 text-white border border-slate-800 shadow-2xl">
               <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
 
@@ -406,26 +470,26 @@ export const HomePage: React.FC<HomePageProps> = ({
                   </p>
 
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-2">
-                    <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-center">
+                    <motion.div whileHover={{ y: -3 }} className="p-3 rounded-xl bg-white/5 border border-white/10 text-center">
                       <InfinityIcon className="w-5 h-5 text-amber-400 mx-auto mb-1" />
                       <div className="text-xs font-bold text-white">Unlimited Files</div>
                       <div className="text-[10px] text-slate-400 font-medium">No daily limit</div>
-                    </div>
-                    <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-center">
+                    </motion.div>
+                    <motion.div whileHover={{ y: -3 }} className="p-3 rounded-xl bg-white/5 border border-white/10 text-center">
                       <Zap className="w-5 h-5 text-blue-400 mx-auto mb-1" />
                       <div className="text-xs font-bold text-white">Faster Speed</div>
                       <div className="text-[10px] text-slate-400 font-medium">Multi-thread GPU</div>
-                    </div>
-                    <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-center">
+                    </motion.div>
+                    <motion.div whileHover={{ y: -3 }} className="p-3 rounded-xl bg-white/5 border border-white/10 text-center">
                       <Crown className="w-5 h-5 text-purple-400 mx-auto mb-1" />
                       <div className="text-xs font-bold text-white">Priority Support</div>
                       <div className="text-[10px] text-slate-400 font-medium">Alvin Developer Help</div>
-                    </div>
-                    <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-center">
+                    </motion.div>
+                    <motion.div whileHover={{ y: -3 }} className="p-3 rounded-xl bg-white/5 border border-white/10 text-center">
                       <ShieldCheck className="w-5 h-5 text-emerald-400 mx-auto mb-1" />
                       <div className="text-xs font-bold text-white">100% Offline</div>
                       <div className="text-[10px] text-slate-400 font-medium">Private & local</div>
-                    </div>
+                    </motion.div>
                   </div>
                 </div>
 
@@ -442,20 +506,27 @@ export const HomePage: React.FC<HomePageProps> = ({
                     </p>
                   </div>
 
-                  <button
+                  <motion.button
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
                     onClick={onOpenPayment}
-                    className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-slate-950 font-black text-sm shadow-xl flex items-center justify-center gap-2 transition-all transform hover:scale-[1.02]"
+                    className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-slate-950 font-black text-sm shadow-xl flex items-center justify-center gap-2 transition-all"
                   >
                     <span>{isPro ? 'PRO Active - View Benefits' : 'Subscribe Now for ₱120/mo ($2.15 USD)'}</span>
                     <ArrowRight className="w-4 h-4" />
-                  </button>
+                  </motion.button>
                 </div>
               </div>
             </div>
-          </section>
+          </motion.section>
 
           {/* POPULAR TOOLS SECTION */}
-          <section className="space-y-6">
+          <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.3 }}
+            className="space-y-6"
+          >
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-xs font-black tracking-widest text-slate-400 dark:text-slate-500 uppercase">
@@ -473,7 +544,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 <ToolCard key={tool.id} tool={tool} onClick={onSelectTool} theme={theme} />
               ))}
             </div>
-          </section>
+          </motion.section>
         </>
       )}
     </div>

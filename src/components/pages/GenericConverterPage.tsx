@@ -16,7 +16,8 @@ import {
   Sliders,
   Eye,
   X,
-  FileText
+  FileText,
+  Loader2
 } from 'lucide-react';
 
 interface GenericConverterPageProps {
@@ -337,16 +338,48 @@ export const GenericConverterPage: React.FC<GenericConverterPageProps> = ({
 
       {/* Overall Progress & Execution Log */}
       {isConverting && (
-        <div className="space-y-2">
-          <div className="flex justify-between text-xs font-bold text-blue-500">
-            <span>Processing Batch Queue...</span>
-            <span>{overallProgress}%</span>
+        <div
+          className={`p-5 rounded-2xl border space-y-3 shadow-lg transition-all animate-fade-in ${
+            theme === 'dark'
+              ? 'bg-[#1E293B]/90 border-blue-500/30 shadow-blue-900/10'
+              : 'bg-white border-blue-200 shadow-blue-500/10'
+          }`}
+        >
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="relative flex items-center justify-center w-9 h-9 rounded-xl bg-blue-500/15 text-blue-500 border border-blue-500/30 shrink-0">
+                <Loader2 className="w-5 h-5 animate-spin text-blue-500" />
+                <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-blue-500 rounded-full animate-ping" />
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-black uppercase tracking-wider text-blue-600 dark:text-blue-400">
+                    Converting Files...
+                  </span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-500 border border-blue-500/20 shrink-0">
+                    {overallProgress}% Complete
+                  </span>
+                </div>
+                <p className="text-xs font-medium text-slate-600 dark:text-slate-300 truncate mt-0.5">
+                  {items.find((i) => i.status === 'converting')?.name
+                    ? `Processing: ${items.find((i) => i.status === 'converting')?.name}`
+                    : 'Optimizing & formatting output...'}
+                </p>
+              </div>
+            </div>
+            <span className="text-xs font-mono font-bold text-slate-500 dark:text-slate-400 shrink-0 hidden sm:inline">
+              {items.filter((i) => i.status === 'completed').length} / {items.length} Done
+            </span>
           </div>
-          <div className="w-full bg-slate-200 dark:bg-slate-700 h-2.5 rounded-full overflow-hidden">
+
+          {/* Smooth animated progress bar with glowing shimmer */}
+          <div className="relative w-full bg-slate-200 dark:bg-slate-800 h-3.5 rounded-full overflow-hidden p-0.5 border border-slate-300/50 dark:border-slate-700/50 shadow-inner">
             <div
-              className="bg-blue-600 h-full transition-all duration-300"
-              style={{ width: `${overallProgress}%` }}
-            />
+              className="relative h-full rounded-full bg-gradient-to-r from-blue-600 via-indigo-500 to-cyan-400 transition-all duration-500 ease-out shadow-sm shadow-blue-500/50 overflow-hidden"
+              style={{ width: `${Math.max(overallProgress, 4)}%` }}
+            >
+              <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer" />
+            </div>
           </div>
         </div>
       )}

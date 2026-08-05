@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Search, Sun, Moon, Settings, Menu, ArrowRight, X, Star, Crown, LogIn, Sparkles } from 'lucide-react';
 import * as LucideIcons from 'lucide-react';
 import { ConverterTool, UserProfile, CreditState } from '../types/converter';
@@ -71,10 +72,10 @@ export const TopBar: React.FC<TopBarProps> = ({
 
   return (
     <header
-      className={`h-16 sm:h-20 px-3 sm:px-6 md:px-8 flex items-center justify-between gap-2 border-b select-none transition-colors duration-200 z-30 sticky top-0 shrink-0 backdrop-blur-xl ${
+      className={`h-16 sm:h-20 px-3 sm:px-6 md:px-8 flex items-center justify-between gap-2 border-b select-none transition-colors duration-200 z-40 sticky top-0 shrink-0 backdrop-blur-xl ${
         theme === 'dark'
-          ? 'bg-[#0B0F19]/90 border-white/10 text-white'
-          : 'bg-white/90 border-slate-200 text-slate-900'
+          ? 'bg-[#0B0F19]/95 border-white/10 text-white'
+          : 'bg-white/95 border-slate-200 text-slate-900'
       }`}
     >
       {/* Mobile Menu Button & Search Input Bar */}
@@ -127,20 +128,32 @@ export const TopBar: React.FC<TopBarProps> = ({
           {/* ULTRA-MODERN LIVE POPUP DROPDOWN */}
           {isOpen && (
             <div
-              className={`absolute top-full left-0 right-0 mt-2 rounded-3xl border shadow-2xl overflow-hidden z-50 animate-fade-in backdrop-blur-2xl ${
+              className={`absolute top-full left-0 right-0 mt-2 rounded-2xl border shadow-2xl overflow-hidden z-50 transition-all ${
                 theme === 'dark'
-                  ? 'bg-[#141A26] border-white/10 text-white shadow-black/80'
-                  : 'bg-white border-slate-200 text-slate-900 shadow-slate-300/50'
+                  ? 'bg-[#141A26] border-slate-700 text-white shadow-2xl shadow-black/90'
+                  : 'bg-white border-slate-200 text-slate-900 shadow-2xl shadow-slate-300/80'
               }`}
             >
               {/* Header with Category Filter Tabs */}
-              <div className="p-3 border-b border-inherit bg-[#0B0F19]/50 space-y-2">
-                <div className="flex items-center justify-between text-xs font-bold text-[#B5BDD1]">
-                  <span className="flex items-center gap-1.5 text-blue-400">
+              <div
+                className={`p-3 border-b space-y-2 ${
+                  theme === 'dark'
+                    ? 'border-slate-800 bg-[#0F172A]/70 text-slate-300'
+                    : 'border-slate-200 bg-slate-50 text-slate-700'
+                }`}
+              >
+                <div className="flex items-center justify-between text-xs font-bold">
+                  <span className="flex items-center gap-1.5 text-blue-500">
                     <Sparkles className="w-3.5 h-3.5" />
                     <span>Found {displayedTools.length} Tools</span>
                   </span>
-                  <span className="text-[10px] font-mono font-bold text-[#B5BDD1] bg-white/5 px-2 py-0.5 rounded-md border border-white/10 hidden sm:inline-block">
+                  <span
+                    className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-md border hidden sm:inline-block ${
+                      theme === 'dark'
+                        ? 'bg-slate-800/80 text-slate-300 border-slate-700'
+                        : 'bg-slate-200/80 text-slate-600 border-slate-300'
+                    }`}
+                  >
                     Press ↵ to Open
                   </span>
                 </div>
@@ -160,7 +173,9 @@ export const TopBar: React.FC<TopBarProps> = ({
                       className={`px-3 py-1 rounded-xl text-[11px] font-bold transition-all shrink-0 ${
                         selectedCategory === cat.id
                           ? 'bg-blue-600 text-white shadow-md'
-                          : 'bg-white/5 text-[#B5BDD1] hover:text-white hover:bg-white/10'
+                          : theme === 'dark'
+                          ? 'bg-slate-800/80 text-slate-300 hover:text-white hover:bg-slate-700'
+                          : 'bg-slate-200/80 text-slate-700 hover:bg-slate-200'
                       }`}
                     >
                       {cat.label}
@@ -178,39 +193,59 @@ export const TopBar: React.FC<TopBarProps> = ({
                       <div
                         key={tool.id}
                         onClick={() => handleToolClick(tool)}
-                        className={`p-2.5 sm:p-3 rounded-2xl cursor-pointer flex items-center justify-between gap-3 transition-all transform hover:scale-[1.005] group ${
+                        className={`p-2.5 sm:p-3 rounded-2xl cursor-pointer flex items-center justify-between gap-3 transition-all group ${
                           theme === 'dark'
-                            ? 'hover:bg-[#1B2435] text-white border border-transparent hover:border-blue-500/30'
-                            : 'hover:bg-blue-50/80 text-slate-900 border border-transparent hover:border-blue-200'
+                            ? 'hover:bg-slate-800/80 text-white border border-transparent hover:border-slate-700'
+                            : 'hover:bg-blue-50 text-slate-900 border border-transparent hover:border-blue-200'
                         }`}
                       >
                         <div className="flex items-center gap-3 min-w-0">
-                          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center shrink-0 border border-blue-500/20 shadow-sm group-hover:scale-105 transition-transform">
+                          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center shrink-0 border border-blue-500/20 shadow-sm group-hover:scale-105 transition-transform">
                             <IconComp className="w-4 h-4 sm:w-5 sm:h-5" />
                           </div>
                           <div className="min-w-0">
                             <div className="flex items-center gap-2">
-                              <span className="font-extrabold text-xs text-white group-hover:text-blue-400 transition-colors truncate">
+                              <span
+                                className={`font-extrabold text-xs transition-colors truncate ${
+                                  theme === 'dark'
+                                    ? 'text-white group-hover:text-blue-400'
+                                    : 'text-slate-900 group-hover:text-blue-600'
+                                }`}
+                              >
                                 {tool.name}
                               </span>
-                              <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold uppercase tracking-wider bg-white/5 text-[#B5BDD1] shrink-0">
+                              <span
+                                className={`px-1.5 py-0.5 rounded text-[9px] font-mono font-bold uppercase tracking-wider shrink-0 ${
+                                  theme === 'dark'
+                                    ? 'bg-slate-800 text-slate-300 border border-slate-700'
+                                    : 'bg-slate-100 text-slate-600 border border-slate-200'
+                                }`}
+                              >
                                 {tool.category}
                               </span>
                             </div>
-                            <p className="text-[10px] sm:text-[11px] text-[#B5BDD1] truncate mt-0.5">
+                            <p
+                              className={`text-[10px] sm:text-[11px] truncate mt-0.5 ${
+                                theme === 'dark' ? 'text-slate-400' : 'text-slate-500'
+                              }`}
+                            >
                               {tool.description}
                             </p>
                           </div>
                         </div>
 
                         <div className="flex items-center gap-1 shrink-0">
-                          <ArrowRight className="w-4 h-4 text-blue-400 shrink-0 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
+                          <ArrowRight className="w-4 h-4 text-blue-500 shrink-0 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
                         </div>
                       </div>
                     );
                   })
                 ) : (
-                  <div className="p-6 text-center text-xs text-[#B5BDD1] font-medium space-y-1">
+                  <div
+                    className={`p-6 text-center text-xs font-medium space-y-1 ${
+                      theme === 'dark' ? 'text-slate-400' : 'text-slate-500'
+                    }`}
+                  >
                     <p>No converters found in "{selectedCategory}"</p>
                   </div>
                 )}
@@ -233,29 +268,35 @@ export const TopBar: React.FC<TopBarProps> = ({
 
         {/* CREDITS DISPLAY BADGE */}
         {isPro ? (
-          <button
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={onOpenPricing}
-            className="flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-full text-[11px] sm:text-xs font-black bg-gradient-to-r from-amber-500/20 via-orange-500/20 to-amber-500/20 text-amber-400 border border-amber-500/30 shadow-sm hover:scale-105 transition-transform"
+            className="flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-full text-[11px] sm:text-xs font-black bg-gradient-to-r from-amber-500/20 via-orange-500/20 to-amber-500/20 text-amber-400 border border-amber-500/30 shadow-sm transition-transform"
             title="Pro Subscription Active - Unlimited File Conversions"
           >
             <Crown className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
             <span className="hidden sm:inline">PRO UNLIMITED</span>
             <span className="sm:hidden">PRO</span>
-          </button>
+          </motion.button>
         ) : (
-          <button
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={onOpenPricing}
             className="flex items-center gap-1 px-2.5 sm:px-3.5 py-1.5 rounded-full text-[11px] sm:text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 transition-colors"
             title="Daily Free Credits"
           >
             <Star className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-amber-400 text-amber-400" />
             <span>{credits.remaining}/{credits.max}</span>
-          </button>
+          </motion.button>
         )}
 
         {/* USER AUTH / PROFILE BUTTON */}
         {user ? (
-          <button
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
             onClick={onOpenProfile}
             className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-2xl border font-bold text-xs transition-all ${
               theme === 'dark'
@@ -267,19 +308,23 @@ export const TopBar: React.FC<TopBarProps> = ({
               {user.name.charAt(0).toUpperCase()}
             </div>
             <span className="max-w-[80px] sm:max-w-[100px] truncate hidden md:inline">{user.name}</span>
-          </button>
+          </motion.button>
         ) : (
-          <button
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={onOpenAuth}
-            className="flex items-center gap-1 px-3 sm:px-4 py-1.5 sm:py-2 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs shadow-lg shadow-blue-500/20 transition-all"
+            className="flex items-center gap-1 px-3 sm:px-4 py-1.5 sm:py-2 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold text-xs shadow-lg shadow-blue-500/20 transition-all"
           >
             <LogIn className="w-3.5 h-3.5" />
             <span>Login</span>
-          </button>
+          </motion.button>
         )}
 
         {/* Dark/Light Mode Toggle */}
-        <button
+        <motion.button
+          whileHover={{ scale: 1.1, rotate: 15 }}
+          whileTap={{ scale: 0.9 }}
           onClick={toggleTheme}
           className={`p-2 sm:p-2.5 rounded-2xl border transition-all duration-200 ${
             theme === 'dark'
@@ -289,10 +334,12 @@ export const TopBar: React.FC<TopBarProps> = ({
           title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
         >
           {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-        </button>
+        </motion.button>
 
         {/* Settings Button */}
-        <button
+        <motion.button
+          whileHover={{ scale: 1.1, rotate: 45 }}
+          whileTap={{ scale: 0.9 }}
           onClick={onOpenSettings}
           className={`p-2 sm:p-2.5 rounded-2xl border transition-all duration-200 ${
             theme === 'dark'
@@ -302,7 +349,7 @@ export const TopBar: React.FC<TopBarProps> = ({
           title="Settings"
         >
           <Settings className="w-4 h-4" />
-        </button>
+        </motion.button>
       </div>
     </header>
   );

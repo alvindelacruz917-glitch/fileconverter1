@@ -345,14 +345,14 @@ export const ImageToPdfStudio: React.FC<ImageToPdfStudioProps> = ({
               <select
                 value={options.pageSize}
                 onChange={(e) => setOptions({ ...options, pageSize: e.target.value as any })}
-                className={`w-full p-2.5 rounded-xl border text-sm outline-none ${
+                className={`w-full p-2.5 rounded-xl border text-sm outline-none cursor-pointer ${
                   theme === 'dark' ? 'bg-slate-900 border-slate-700 text-white' : 'bg-slate-50 border-slate-200 text-slate-900'
                 }`}
               >
-                <option value="A4">A4 Standard</option>
-                <option value="Letter">US Letter</option>
-                <option value="Legal">Legal</option>
-                <option value="Auto">Auto Size (Match Image)</option>
+                <option value="A4" className={theme === 'dark' ? 'bg-[#0F172A] text-white' : 'bg-white text-slate-900'}>A4 Standard</option>
+                <option value="Letter" className={theme === 'dark' ? 'bg-[#0F172A] text-white' : 'bg-white text-slate-900'}>US Letter</option>
+                <option value="Legal" className={theme === 'dark' ? 'bg-[#0F172A] text-white' : 'bg-white text-slate-900'}>Legal</option>
+                <option value="Auto" className={theme === 'dark' ? 'bg-[#0F172A] text-white' : 'bg-white text-slate-900'}>Auto Size (Match Image)</option>
               </select>
             </div>
 
@@ -362,13 +362,13 @@ export const ImageToPdfStudio: React.FC<ImageToPdfStudioProps> = ({
               <select
                 value={options.orientation}
                 onChange={(e) => setOptions({ ...options, orientation: e.target.value as any })}
-                className={`w-full p-2.5 rounded-xl border text-sm outline-none ${
+                className={`w-full p-2.5 rounded-xl border text-sm outline-none cursor-pointer ${
                   theme === 'dark' ? 'bg-slate-900 border-slate-700 text-white' : 'bg-slate-50 border-slate-200 text-slate-900'
                 }`}
               >
-                <option value="Portrait">Portrait</option>
-                <option value="Landscape">Landscape</option>
-                <option value="Auto">Auto Detect</option>
+                <option value="Portrait" className={theme === 'dark' ? 'bg-[#0F172A] text-white' : 'bg-white text-slate-900'}>Portrait</option>
+                <option value="Landscape" className={theme === 'dark' ? 'bg-[#0F172A] text-white' : 'bg-white text-slate-900'}>Landscape</option>
+                <option value="Auto" className={theme === 'dark' ? 'bg-[#0F172A] text-white' : 'bg-white text-slate-900'}>Auto Detect</option>
               </select>
             </div>
 
@@ -378,14 +378,14 @@ export const ImageToPdfStudio: React.FC<ImageToPdfStudioProps> = ({
               <select
                 value={options.margins}
                 onChange={(e) => setOptions({ ...options, margins: e.target.value as any })}
-                className={`w-full p-2.5 rounded-xl border text-sm outline-none ${
+                className={`w-full p-2.5 rounded-xl border text-sm outline-none cursor-pointer ${
                   theme === 'dark' ? 'bg-slate-900 border-slate-700 text-white' : 'bg-slate-50 border-slate-200 text-slate-900'
                 }`}
               >
-                <option value="none">None (0px)</option>
-                <option value="small">Small (10px)</option>
-                <option value="medium">Medium (20px)</option>
-                <option value="large">Large (30px)</option>
+                <option value="none" className={theme === 'dark' ? 'bg-[#0F172A] text-white' : 'bg-white text-slate-900'}>None (0px)</option>
+                <option value="small" className={theme === 'dark' ? 'bg-[#0F172A] text-white' : 'bg-white text-slate-900'}>Small (10px)</option>
+                <option value="medium" className={theme === 'dark' ? 'bg-[#0F172A] text-white' : 'bg-white text-slate-900'}>Medium (20px)</option>
+                <option value="large" className={theme === 'dark' ? 'bg-[#0F172A] text-white' : 'bg-white text-slate-900'}>Large (30px)</option>
               </select>
             </div>
 

@@ -24,7 +24,9 @@ import {
   PaymentSettings,
   getPaymentSettings,
   fetchPaymentSettingsFirestore,
-  subscribePaymentSettings
+  subscribePaymentSettings,
+  DEFAULT_GCASH_QR,
+  DEFAULT_MAYA_QR
 } from '../../utils/paymentSettings';
 
 interface PaymentModalProps {
@@ -426,7 +428,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                         </span>
                         <div className="w-48 h-48 sm:w-56 sm:h-56 p-2 rounded-2xl bg-white border border-blue-500/30 shadow-lg flex items-center justify-center">
                           <img
-                            src={paymentSettings.gcashQrCode}
+                            src={paymentSettings.gcashQrCode || DEFAULT_GCASH_QR}
                             alt="GCash QR Code"
                             className="w-full h-full object-contain rounded-xl"
                           />
@@ -471,7 +473,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                         </span>
                         <div className="w-48 h-48 sm:w-56 sm:h-56 p-2 rounded-2xl bg-white border border-emerald-500/30 shadow-lg flex items-center justify-center">
                           <img
-                            src={paymentSettings.mayaQrCode}
+                            src={paymentSettings.mayaQrCode || DEFAULT_MAYA_QR}
                             alt="Maya QR Code"
                             className="w-full h-full object-contain rounded-xl"
                           />

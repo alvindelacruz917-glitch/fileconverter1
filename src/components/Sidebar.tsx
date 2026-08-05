@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'motion/react';
 import {
   Home,
   FileText,
@@ -84,7 +85,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </div>
               <div className="overflow-hidden min-w-0">
                 <h1 className="font-extrabold text-sm leading-tight tracking-tight text-slate-900 dark:text-white truncate">
-                  Universal Converter
+                  FilesConverter.site
                 </h1>
                 <div className="flex items-center gap-1.5 mt-0.5">
                   <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-blue-500 bg-blue-500/10 px-1.5 py-0.5 rounded border border-blue-500/20">
@@ -132,17 +133,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
             const isActive = activeView === item.id;
             const isPricing = item.id === 'pricing';
             return (
-              <button
+              <motion.button
                 key={item.id}
+                whileHover={{ x: 3 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => {
                   setActiveView(item.id);
                   setMobileOpen(false);
                 }}
-                className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-2xl font-bold text-xs transition-all duration-200 group relative ${
+                className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-2xl font-bold text-xs transition-colors duration-200 group relative ${
                   isActive
                     ? isPricing
                       ? 'bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white shadow-lg shadow-amber-500/20'
-                      : 'bg-blue-600 text-white shadow-lg shadow-blue-500/25'
+                      : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/25'
                     : theme === 'dark'
                     ? 'hover:bg-[#141A26] text-[#B5BDD1] hover:text-white'
                     : 'hover:bg-slate-100 text-slate-600 hover:text-slate-900'
@@ -173,23 +176,32 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
                 {/* Active Bar Indicator */}
                 {isActive && (
-                  <div className={`absolute left-0 top-2 bottom-2 w-1 rounded-r-full ${isPricing ? 'bg-amber-300' : 'bg-white'}`} />
+                  <motion.div
+                    layoutId="activeBar"
+                    className={`absolute left-0 top-2 bottom-2 w-1 rounded-r-full ${
+                      isPricing ? 'bg-amber-300' : 'bg-white'
+                    }`}
+                  />
                 )}
-              </button>
+              </motion.button>
             );
           })}
         </nav>
 
         {/* Footer Branding Tag */}
         {(!collapsed || mobileOpen) && (
-          <div className="p-4 m-3 rounded-2xl bg-[#141A26] text-center border border-white/10 space-y-1 shrink-0">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="p-4 m-3 rounded-2xl bg-[#141A26] text-center border border-white/10 space-y-1 shrink-0 shadow-lg"
+          >
             <p className="text-xs font-black text-white">
-              Universal Converter Pro
+              FilesConverter.site Pro
             </p>
             <p className="text-[11px] font-extrabold text-blue-400">
               Developed by Alvin
             </p>
-          </div>
+          </motion.div>
         )}
       </aside>
     </>

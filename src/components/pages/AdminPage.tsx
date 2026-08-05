@@ -27,7 +27,9 @@ import {
   PaymentSettings,
   getPaymentSettings,
   savePaymentSettings,
-  fetchPaymentSettingsFirestore
+  fetchPaymentSettingsFirestore,
+  DEFAULT_GCASH_QR,
+  DEFAULT_MAYA_QR
 } from '../../utils/paymentSettings';
 import {
   getStoredHistory,
@@ -364,7 +366,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({
                 </span>
                 <div className="w-44 h-44 rounded-2xl bg-slate-100 dark:bg-slate-800 p-2 border border-slate-200 dark:border-slate-700 flex items-center justify-center shadow-md overflow-hidden">
                   <img
-                    src={qrFilePreview || paymentSettings.gcashQrCode}
+                    src={qrFilePreview || paymentSettings.gcashQrCode || DEFAULT_GCASH_QR}
                     alt="GCash QR Code"
                     className="w-full h-full object-contain rounded-xl"
                   />
@@ -456,7 +458,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({
                 </span>
                 <div className="w-44 h-44 rounded-2xl bg-slate-100 dark:bg-slate-800 p-2 border border-slate-200 dark:border-slate-700 flex items-center justify-center shadow-md overflow-hidden">
                   <img
-                    src={mayaQrPreview || paymentSettings.mayaQrCode}
+                    src={mayaQrPreview || paymentSettings.mayaQrCode || DEFAULT_MAYA_QR}
                     alt="Maya QR Code"
                     className="w-full h-full object-contain rounded-xl"
                   />
