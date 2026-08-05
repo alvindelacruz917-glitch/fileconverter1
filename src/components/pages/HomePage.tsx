@@ -68,7 +68,7 @@ const CustomToolDropdown: React.FC<{
   });
 
   return (
-    <div ref={dropdownRef} className="relative z-50 flex-1 min-w-[280px]">
+    <div ref={dropdownRef} className="relative z-50 flex-1 w-full min-w-0 sm:min-w-[280px]">
       {/* TRIGGER BUTTON */}
       <button
         type="button"
@@ -323,7 +323,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: 'easeOut' }}
-            className={`relative z-20 rounded-[28px] p-8 md:p-12 border transition-all ${
+            className={`relative z-20 rounded-[28px] p-5 sm:p-8 md:p-12 border transition-all ${
               theme === 'dark'
                 ? 'bg-gradient-to-br from-[#1E293B] via-[#0F172A] to-[#1E293B] border-slate-700/80 shadow-2xl'
                 : 'bg-gradient-to-br from-white via-slate-50 to-blue-50/40 border-slate-200 shadow-xl'
@@ -332,28 +332,28 @@ export const HomePage: React.FC<HomePageProps> = ({
             {/* Background Accent Blur */}
             <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
 
-            <div className="relative z-10 space-y-8">
+            <div className="relative z-10 space-y-6 sm:space-y-8">
               {/* Header Badge & Title */}
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="space-y-3">
+                <div className="space-y-2.5">
                   <motion.div
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.1 }}
-                    className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-extrabold bg-blue-600/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 shadow-sm"
+                    className="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-extrabold bg-blue-600/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 shadow-sm"
                   >
                     <Zap className="w-3.5 h-3.5 fill-current animate-pulse text-blue-500" />
                     <span>FilesConverter.site • Universal Converter Pro</span>
                   </motion.div>
 
-                  <h1 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-white leading-[1.15]">
+                  <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">
                     Convert Files Instantly
                   </h1>
 
-                  <p className="text-sm md:text-base font-semibold text-slate-500 dark:text-slate-300 flex items-center gap-3">
+                  <p className="text-xs sm:text-sm md:text-base font-semibold text-slate-500 dark:text-slate-300 flex flex-wrap items-center gap-2 sm:gap-3">
                     <span className="text-blue-600 dark:text-blue-400 font-bold">Fast Engine</span> •{' '}
                     <span className="text-emerald-500 font-bold">100% Offline Security</span> •{' '}
-                    <span className="text-amber-500 font-bold">Unlimited Batch Processing</span>
+                    <span className="text-amber-500 font-bold">Unlimited Batch</span>
                   </p>
                 </div>
 

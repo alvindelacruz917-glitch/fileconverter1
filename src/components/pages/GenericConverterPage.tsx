@@ -260,7 +260,7 @@ export const GenericConverterPage: React.FC<GenericConverterPageProps> = ({
 
       {/* Output Directory Bar */}
       <div
-        className={`p-4 rounded-2xl border flex items-center justify-between gap-4 ${
+        className={`p-4 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
           theme === 'dark' ? 'bg-[#1E293B] border-slate-700/80' : 'bg-white border-slate-200'
         }`}
       >

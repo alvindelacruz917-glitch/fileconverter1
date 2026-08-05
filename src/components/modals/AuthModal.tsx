@@ -47,7 +47,19 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       onClose();
     } catch (err: any) {
       console.error('Google Auth Error:', err);
-      setError(err.message || 'Google sign-in failed. Please try again.');
+      const isDomainError =
+        err?.code === 'auth/unauthorized-domain' ||
+        err?.message?.includes('unauthorized domain') ||
+        err?.message?.includes('domain-not-allowed') ||
+        err?.message?.includes('unauthorized-domain');
+
+      if (isDomainError) {
+        setError(
+          '⚠️ Ang custom domain na (filesconverter.site) ay kailangan munang idagdag sa "Authorized Domains" sa Firebase Console (Firebase -> Authentication -> Settings -> Authorized Domains). Samantala, gamitin ang 1-Click Quick Access (Free/PRO) o Email/Password login!'
+        );
+      } else {
+        setError(err.message || 'Nabigo ang Google sign-in. Mangyaring subukan muli.');
+      }
     } finally {
       setLoadingGoogle(false);
     }
@@ -200,9 +212,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-sm animate-fade-in">
       <div
-        className={`w-full max-w-md rounded-3xl p-7 border shadow-2xl relative overflow-hidden ${
+        className={`w-full max-w-md rounded-3xl p-5 sm:p-7 border shadow-2xl relative overflow-y-auto max-h-[92vh] ${
           theme === 'dark'
             ? 'bg-[#1E293B] border-slate-700 text-white'
             : 'bg-white border-slate-200 text-slate-900'
