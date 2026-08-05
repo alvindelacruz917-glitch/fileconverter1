@@ -47,18 +47,34 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       onClose();
     } catch (err: any) {
       console.error('Google Auth Error:', err);
+      const isPopupBlocked =
+        err?.code === 'auth/popup-blocked' ||
+        err?.message?.includes('popup-blocked') ||
+        err?.message?.includes('popup_blocked') ||
+        err?.message?.includes('Popup Blocked');
+
+      const isPopupClosed =
+        err?.code === 'auth/popup-closed-by-user' ||
+        err?.message?.includes('popup-closed-by-user');
+
       const isDomainError =
         err?.code === 'auth/unauthorized-domain' ||
         err?.message?.includes('unauthorized domain') ||
         err?.message?.includes('domain-not-allowed') ||
         err?.message?.includes('unauthorized-domain');
 
-      if (isDomainError) {
+      if (isPopupBlocked) {
         setError(
-          '⚠️ Ang custom domain na (filesconverter.site) ay kailangan munang idagdag sa "Authorized Domains" sa Firebase Console (Firebase -> Authentication -> Settings -> Authorized Domains). Samantala, gamitin ang 1-Click Quick Access (Free/PRO) o Email/Password login!'
+          'Google Sign-In popup was blocked by your browser settings. Please enable popups for this site in your browser bar, or sign in using Email/Password / 1-Click Quick Access below.'
+        );
+      } else if (isPopupClosed) {
+        setError('Google Sign-In window was closed before completing. Please try again.');
+      } else if (isDomainError) {
+        setError(
+          'Domain filesconverter.site must be added to "Authorized Domains" in Firebase Console (Authentication -> Settings -> Authorized Domains). In the meantime, please use 1-Click Quick Access or Email/Password login.'
         );
       } else {
-        setError(err.message || 'Nabigo ang Google sign-in. Mangyaring subukan muli.');
+        setError(err.message || 'Google Sign-In failed. Please try again or use Quick Access.');
       }
     } finally {
       setLoadingGoogle(false);
@@ -70,7 +86,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     setError('');
 
     if (!email || !password) {
-      setError('Mangyaring punan ang lahat ng kinakailangang fields.');
+      setError('Please fill in all required fields.');
       return;
     }
 
@@ -84,22 +100,22 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     // --- SIGN UP LOGIC ---
     if (tab === 'signup') {
       if (!name || name.trim().length < 2) {
-        setError('Mangyaring ilagay ang iyong pangalan (at least 2 letters).');
+        setError('Please enter your full name (at least 2 characters).');
         return;
       }
       if (!isValidEmail(normEmail)) {
-        setError('Mangyaring maglagay ng valid at totoong working email address! (Halimbawa: juan@gmail.com)');
+        setError('Please enter a valid working email address (e.g., user@gmail.com).');
         return;
       }
       if (normPass.length < 6) {
-        setError('Ang password ay dapat hindi bababa sa 6 characters.');
+        setError('Password must be at least 6 characters long.');
         return;
       }
 
       // Check if account already exists
       const existing = getRegisteredUsers().find(u => u.email.toLowerCase() === normEmail);
       if (existing) {
-        setError('May naitala nang account gamit ang email na ito! Mangyaring mag-Login na lamang.');
+        setError('An account with this email already exists. Please sign in instead.');
         return;
       }
 
@@ -161,7 +177,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         onClose();
         return;
       } else {
-        setError('Maling password para sa Admin account! (Subukan ang alvin123)');
+        setError('Incorrect password for Admin account.');
         return;
       }
     }
@@ -171,12 +187,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     const userAcc = registeredList.find(u => u.email.toLowerCase() === normEmail);
 
     if (!userAcc) {
-      setError('Wala pang naitatalang account sa email na ito! Mangyaring mag-Register muna.');
+      setError('No account found with this email. Please register first.');
       return;
     }
 
     if (userAcc.passwordHash !== normPass) {
-      setError('Maling password! Mangyaring subukan muli.');
+      setError('Incorrect password! Please try again.');
       return;
     }
 

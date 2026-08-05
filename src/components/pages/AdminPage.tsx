@@ -202,7 +202,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({
 
     // Sync to Firestore
     await updateFirestoreUserCredits(userId, newCount);
-    onShowToast(`Nalagyan ng credits! Updated to ${newCount} credits!`, 'success');
+    onShowToast(`Credits updated successfully to ${newCount}!`, 'success');
   };
 
   const handleSetCustomCredits = async (userId: string) => {
@@ -283,7 +283,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({
       subscriptionExpiry: 'Lifetime (Admin Granted)',
     };
     onUpdateCurrentUser(updated);
-    onShowToast('Na-grant ang VIP PRO UNLIMITED access!', 'success');
+    onShowToast('VIP PRO UNLIMITED access granted!', 'success');
   };
 
   // Filtered users
@@ -314,7 +314,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({
             <span>Admin Control Panel</span>
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
-            I-manage ang users, dagdagan ng credits, i-update ang payment QR codes, at i-check ang system logs.
+            Manage user accounts, adjust credits, update payment QR codes, and view system logs.
           </p>
         </div>
 
@@ -376,7 +376,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({
                 <span>User Account & Credit Management</span>
               </h3>
               <p className="text-xs text-slate-400">
-                Pumili ng user para magdagdag ng conversion credits, mag-grant ng PRO, o i-manage ang account details.
+                Select a user account to grant credits, toggle PRO plan, or manage details.
               </p>
             </div>
 
@@ -985,7 +985,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({
                 </div>
                 <div>
                   <h3 className="font-extrabold text-base">Add New User Account</h3>
-                  <p className="text-[11px] text-slate-400">Gumawa ng bagong user at bigyan ng initial credits</p>
+                  <p className="text-[11px] text-slate-400">Create a new user account and assign initial credits</p>
                 </div>
               </div>
               <button
